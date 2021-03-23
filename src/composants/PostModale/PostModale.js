@@ -4,25 +4,36 @@ import './PostModale.css'
 
 class PostModale extends Component {
 
+    state = {
+        loadedPost: null
+    }
+
     componentDidUpdate() {
         // console.log('UPDATED')
         if (this.props.id) {
-            axios.get('https://jsonplaceholder.typicode.com/posts/' + this.props.id)
-            .then(reponse =>{
-                console.log(reponse)
-            })
+            if (!this.state.loadedPost || (this.state.loadedPost && this.state.loadedPost !== this.props.id)) {
+                axios.get('https://jsonplaceholder.typicode.com/posts/' + this.props.id)
+                    .then(reponse => {
+                        // console.log(reponse)
+                        this.setState({
+                            loadedPost: reponse.data
+                        })
+                    })
+            }
+
         }
     }
 
     render() {
 
         return (
-            this.props.id ?
+            this.state.loadedPost && this.props.toggle ?
                 <div className="PostComplet">
-                    <h1>Titre</h1>
-                    <p>Contenu</p>
-
-                    <button className="btn btn-danger my-3 btnPost">Fermer</button>
+                    <h1>{this.state.loadedPost.title}</h1>
+                    <p>{this.state.loadedPost.body}</p>
+                    <button className="btn btn-danger my-3 btnPost"
+                    onClick = {this.props.cache}
+                    >Fermer</button>
 
                 </div>
                 : null
